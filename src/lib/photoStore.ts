@@ -7,3 +7,7 @@ export const setPhoto = (name: string, newPhoto: string | ArrayBuffer | null) =>
 export const getPhoto = (name: string) => {
   return photos[name];
 };
+
+export const deletePhoto = (name: string) => {
+    delete photos[name];
+}

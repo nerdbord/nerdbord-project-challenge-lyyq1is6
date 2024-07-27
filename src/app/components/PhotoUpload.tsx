@@ -1,17 +1,25 @@
-import React, { useState } from 'react';
-import axios from 'axios';
+import React, { useState } from "react";
+import axios from "axios";
 
-const PhotoUpload: React.FC = () => {
-  const [photoName, setPhotoName] = useState<string | null>(null);
+interface PhotoUploadProps {
+  photoName: string;
+  setPhotoName: React.Dispatch<React.SetStateAction<string>>;
+}
 
-  const handlePhotoChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+const PhotoUpload: React.FC<PhotoUploadProps> = (props: PhotoUploadProps) => {
+  const { photoName, setPhotoName } = props;
+
+  const handlePhotoChange = async (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
     const file = event.target.files?.[0];
     if (file) {
       const reader = new FileReader();
       reader.onloadend = async () => {
         const result = reader.result;
         setPhotoName(file.name);
-        await axios.post('/api/upload', { name: file.name, photo: result });
+        await axios.post("/api/upload", { name: file.name, photo: result });
+        //window.open(`/api/${file.name}`, '_blank');
       };
       reader.readAsDataURL(file);
     }
