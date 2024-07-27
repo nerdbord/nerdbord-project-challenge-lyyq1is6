@@ -1,13 +1,14 @@
-import React, { useState } from "react";
-import axios from "axios";
+import React from "react";
 
 interface PhotoUploadProps {
-  photoName: string;
   setPhotoName: React.Dispatch<React.SetStateAction<string>>;
+  setPhoto: React.Dispatch<
+    React.SetStateAction<string | ArrayBuffer | null | ImageData | undefined>
+  >;
 }
 
 const PhotoUpload: React.FC<PhotoUploadProps> = (props: PhotoUploadProps) => {
-  const { photoName, setPhotoName } = props;
+  const { setPhotoName, setPhoto } = props;
 
   const handlePhotoChange = async (
     event: React.ChangeEvent<HTMLInputElement>
@@ -18,17 +19,20 @@ const PhotoUpload: React.FC<PhotoUploadProps> = (props: PhotoUploadProps) => {
       reader.onloadend = async () => {
         const result = reader.result;
         setPhotoName(file.name);
-        await axios.post("/api/upload", { name: file.name, photo: result });
-        //window.open(`/api/${file.name}`, '_blank');
+        setPhoto(result);
+      };
+      reader.onerror = () => {
+        console.error("Failed to read file!");
       };
       reader.readAsDataURL(file);
+    } else {
+      console.error("Failed choosing photo!");
     }
   };
 
   return (
     <div>
       <input type="file" accept="image/*" onChange={handlePhotoChange} />
-      {photoName && <img src={`/api/${photoName}`} alt="Selected" />}
     </div>
   );
 };

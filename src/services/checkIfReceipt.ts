@@ -12,9 +12,11 @@ Respond ONLY by correctly filling out the following object structure, where the 
 }
 `;
 
-async function checkIfReceipt(imageUrl: string) {
+async function checkIfReceipt(
+  imageUrl: string
+): Promise<{ isReceipt: boolean }> {
   const response = await fetchChatCompletion(SYSTEMPROMPT, imageUrl);
-  const jsonStringfromResponse = response.choices[0].message.content
+  const jsonStringfromResponse = response.choices[0].message.content;
   return JSON.parse(jsonStringfromResponse);
 }
 
