@@ -1,0 +1,28 @@
+{
+  "categories": {
+    "Food": ["Groceries", "Snacks", "Beverages", "Dining Out / Restaurants"],
+    "Household Items": [
+      "Cleaning Supplies",
+      "Laundry Products",
+      "Paper Products",
+      "Kitchenware"
+    ],
+    "Personal Care": [
+      "Toiletries",
+      "Cosmetics",
+      "Health Products",
+      "Hair Care"
+    ],
+    "Baby and Child Care": ["Baby Food", "Diapers", "Baby Toiletries"],
+    "Pet Care": ["Pet Food", "Pet Supplies"],
+    "Health and Wellness": ["Prescription Medication", "Health Supplements"],
+    "Alcohol and Tobacco": ["Alcoholic Beverages", "Tobacco Products"],
+    "Non-Food Items": ["Stationery", "Electronics", "Books and Magazines"],
+    "Miscellaneous": ["Gifts", "Seasonal Items"],
+    "Utilities": ["Household Batteries", "Light Bulbs"],
+    "Clothing and Accessories": ["Apparel", "Shoes", "Accessories"],
+    "Automotive": ["Car Maintenance Supplies", "Fuel"],
+    "Entertainment": ["DVDs/Blu-rays", "Toys and Games"],
+    "Office Supplies": ["Printer Ink", "Office Paper", "Pens and Notebooks"]
+  }
+}
