@@ -44,19 +44,20 @@ const CameraComponent = (props: CameraComponentProps) => {
         >
           TAKE PHOTO
         </button>
-        <button
-          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-          disabled={numberOfCameras <= 1}
-          onClick={() => {
-            if (camera.current) {
-              camera.current.switchCamera();
-            } else {
-              console.error("Can't switch camera.");
-            }
-          }}
-        >
-          SWAP CAMERA
-        </button>
+        {numberOfCameras <= 1 && (
+          <button
+            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+            onClick={() => {
+              if (camera.current) {
+                camera.current.switchCamera();
+              } else {
+                console.error("Can't switch camera.");
+              }
+            }}
+          >
+            SWAP CAMERA
+          </button>
+        )}
       </div>
     </div>
   );

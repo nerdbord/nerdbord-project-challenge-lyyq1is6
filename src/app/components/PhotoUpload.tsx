@@ -20,18 +20,19 @@ const PhotoUpload: React.FC<PhotoUploadProps> = (props: PhotoUploadProps) => {
         const result = reader.result;
         setPhotoName(file.name);
         setPhoto(result);
-        //await axios.post("/api/upload", { name: file.name, photo: result });
+      };
+      reader.onerror = () => {
+        console.error("Failed to read file!");
       };
       reader.readAsDataURL(file);
+    } else {
+      console.error("Failed choosing photo!");
     }
   };
 
   return (
     <div>
       <input type="file" accept="image/*" onChange={handlePhotoChange} />
-      {
-        //photoName && <img src={`/api/${photoName}`} alt="Selected" />
-      }
     </div>
   );
 };

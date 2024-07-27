@@ -1,7 +1,7 @@
 import checkIfReceipt from "./checkIfReceipt";
 import getReceiptContents from "./getReceiptContents";
 
-async function parseRecepit(imageUrl: string) {
+async function parseReceipt(imageUrl: string) {
   const isReceipt = await checkIfReceipt(imageUrl);
   if (!isReceipt.isReceipt) {
     const date = new Date().toDateString();
@@ -14,4 +14,4 @@ async function parseRecepit(imageUrl: string) {
   return getReceiptContents(imageUrl);
 }
 
-export default parseRecepit;
+export default parseReceipt;

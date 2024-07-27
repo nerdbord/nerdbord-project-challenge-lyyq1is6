@@ -8,6 +8,7 @@ import CameraComponent from "./CameraComponent";
 import ExpenseTable from "./ExpenseTable";
 import PhotoUpload from "./PhotoUpload";
 import axios from "axios";
+import parseReceipt from "@/services/parseReceipt";
 
 const PhotoHandlingWrapper = () => {
   const [photo, setPhoto] = useState<string | ArrayBuffer | ImageData | null>();
@@ -23,9 +24,13 @@ const PhotoHandlingWrapper = () => {
       return;
     }
     setIsLoading(true);
-    await axios.post("/api/upload", { name: photoName, photo: photo });
+    try {
+      await axios.post("/api/upload", { name: photoName, photo: photo });
+    } catch {
+        console.error("Photo upload failed!")
+    }
 
-    const response = await getReceiptContents(
+    const response = await parseReceipt(
       `https://paragon-of-saving.vercel.app/api/${photoName}`
     );
 
