@@ -9,6 +9,8 @@ import ExpenseTable from "./ExpenseTable";
 import PhotoUpload from "./PhotoUpload";
 import axios from "axios";
 import parseReceipt from "@/services/parseReceipt";
+import { addItem } from "@/services/supabaseServices";
+import { v4 as uuidv4 } from "uuid";
 
 const PhotoHandlingWrapper = () => {
   const [photo, setPhoto] = useState<string | ArrayBuffer | ImageData | null>();
@@ -17,6 +19,8 @@ const PhotoHandlingWrapper = () => {
 
   const [receiptData, setReceiptData] = useState<Receipt>();
   const [isLoading, setIsLoading] = useState(false);
+
+  const userId = uuidv4();
 
   const handleOnClick = async () => {
     if (!photoName || !photo) {
@@ -27,7 +31,7 @@ const PhotoHandlingWrapper = () => {
     try {
       await axios.post("/api/upload", { name: photoName, photo: photo });
     } catch {
-        console.error("Photo upload failed!")
+      console.error("Photo upload failed!");
     }
 
     const response = await parseReceipt(
@@ -35,6 +39,8 @@ const PhotoHandlingWrapper = () => {
     );
 
     setReceiptData(response as Receipt);
+    await addItem(userId, "Test Item 1", "2024-12-10", 100);
+
     deletePhoto(photoName);
     setIsLoading(false);
   };
