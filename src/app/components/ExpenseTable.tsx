@@ -1,19 +1,44 @@
-import React from 'react';
-import { Receipt } from '../types/types';
+import React, { useEffect, useState } from "react";
+import { getItems } from "@/services/supabaseServices";
 
-type Props = {
-  data: Receipt;
+type Item = {
+  id: number;
+  item_name: string;
+  date: string;
+  price: number;
+  user_id: string;
 };
 
-const ExpenseTable: React.FC<Props> = ({ data }) => {
-  const rows = Object.entries(data).flatMap(([date, items], index) => 
-    Object.entries(items).map(([itemName, price], itemIndex) => ({
-      id: index * Object.keys(items).length + itemIndex + 1,
-      itemName,
-      date,
-      price,
-    }))
-  );
+type Props = {
+  userId: string;
+};
+
+const ExpenseTable: React.FC<Props> = ({ userId }) => {
+  const [items, setItems] = useState<Item[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const data = await getItems(userId);
+        setItems(data);
+      } catch (error) {
+        console.error("Error fetching items:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [userId]);
+
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+
+  if (items.length === 0) {
+    return <div>No data available</div>;
+  }
 
   return (
     <div className="overflow-x-auto">
@@ -27,10 +52,10 @@ const ExpenseTable: React.FC<Props> = ({ data }) => {
           </tr>
         </thead>
         <tbody>
-          {rows.map(({ id, itemName, date, price }) => (
+          {items.map(({ id, item_name, date, price }) => (
             <tr key={id} className="text-center border-t">
               <td className="px-4 py-2">{id}</td>
-              <td className="px-4 py-2">{itemName}</td>
+              <td className="px-4 py-2">{item_name}</td>
               <td className="px-4 py-2">{date}</td>
               <td className="px-4 py-2">{price.toFixed(2)}</td>
             </tr>

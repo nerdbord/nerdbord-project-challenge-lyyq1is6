@@ -88,7 +88,9 @@ const PhotoHandlingWrapper = () => {
       >
         {isLoading ? "Loading..." : "Czekierałt!"}
       </button>
-      {receiptData && <ExpenseTable data={receiptData} />}
+      {receiptData && (
+        <ExpenseTable userId={"7b1c95f7-9cd8-40ef-9eaa-ba27518d3def"} />
+      )}
     </div>
   );
 };
