@@ -12,6 +12,12 @@ import parseReceipt from "@/services/parseReceipt";
 import { addItem } from "@/services/supabaseServices";
 import { v4 as uuidv4 } from "uuid";
 
+type ParsedReceipt = {
+  [date: string]: {
+    [itemName: string]: number;
+  };
+};
+
 const PhotoHandlingWrapper = () => {
   const [photo, setPhoto] = useState<string | ArrayBuffer | ImageData | null>();
   const [cameraOn, setCameraOn] = useState(false);
@@ -34,12 +40,23 @@ const PhotoHandlingWrapper = () => {
       console.error("Photo upload failed!");
     }
 
-    const response = await parseReceipt(
+    const response: ParsedReceipt = await parseReceipt(
       `https://paragon-of-saving.vercel.app/api/${photoName}`
     );
 
     setReceiptData(response as Receipt);
-    await addItem(userId, "Test Item 1", "2024-12-10", 100);
+
+    const rows = Object.entries(response).flatMap(([date, items], index) =>
+      Object.entries(items).map(([itemName, price], itemIndex) => ({
+        itemName,
+        date,
+        price,
+      }))
+    );
+
+    for (const row of rows) {
+      await addItem(userId, row.itemName, new Date().toISOString(), row.price);
+    }
 
     deletePhoto(photoName);
     setIsLoading(false);
