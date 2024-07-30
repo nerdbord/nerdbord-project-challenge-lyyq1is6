@@ -1,4 +1,4 @@
-'use server'
+"use server";
 
 async function fetchChatCompletion(systemPrompt: string, imageUrl: string) {
   const url = "https://training.nerdbord.io/api/v1/openai/chat/completions";
