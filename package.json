@@ -10,6 +10,7 @@
     "https": "next dev --experimental-https"
   },
   "dependencies": {
+    "@clerk/nextjs": "^5.2.12",
     "@supabase/supabase-js": "^2.44.4",
     "@types/uuid": "^10.0.0",
     "axios": "^1.7.2",
