@@ -10,8 +10,10 @@
     "https": "next dev --experimental-https"
   },
   "dependencies": {
+    "@ai-sdk/openai": "^0.0.40",
     "@supabase/supabase-js": "^2.44.4",
     "@types/uuid": "^10.0.0",
+    "ai": "^3.3.0",
     "axios": "^1.7.2",
     "next": "^14.2.5",
     "openai": "^4.53.0",

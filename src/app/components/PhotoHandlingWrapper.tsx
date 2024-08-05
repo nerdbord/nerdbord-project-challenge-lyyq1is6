@@ -11,6 +11,9 @@ import axios from "axios";
 import parseReceipt from "@/services/parseReceipt";
 import { addItem } from "@/services/supabaseServices";
 import { v4 as uuidv4 } from "uuid";
+import {openaiClient} from "@/lib/openai";
+import {generateObject} from "ai";
+import {z} from "zod";
 
 type ParsedReceipt = {
   [date: string]: {
@@ -19,7 +22,7 @@ type ParsedReceipt = {
 };
 
 const PhotoHandlingWrapper = () => {
-  const [photo, setPhoto] = useState<string | ArrayBuffer | ImageData | null>();
+  const [photo, setPhoto] = useState<string>('');
   const [cameraOn, setCameraOn] = useState(false);
   const [photoName, setPhotoName] = useState("");
 
@@ -34,31 +37,37 @@ const PhotoHandlingWrapper = () => {
       return;
     }
     setIsLoading(true);
-    try {
-      await axios.post("/api/upload", { name: photoName, photo: photo });
-    } catch {
-      console.error("Photo upload failed!");
-    }
 
-    const response: ParsedReceipt = await parseReceipt(
-      `https://paragon-of-saving.vercel.app/api/${photoName}`
-    );
+      const { object } = await generateObject({
+          model: openaiClient('gpt-4-turbo'),
+          maxTokens: 512,
+          schema: z.object({
+              items: z.array(
+                  z.object({
+                      name: z.string(),
+                      price: z.number(),
+                      quantity: z.number(),
+                  })
+              ),
+          }),
+          messages: [
+              {
+                  role: 'user',
+                  content: [
+                      {
+                          type: 'text',
+                          text: 'Extract all bought items from the receipt image. Provide each item with its name, price, and quantity.',
+                      },
+                      {
+                          type: 'image',
+                          image: photo,
+                      },
+                  ],
+              },
+          ],
+      });
 
-    setReceiptData(response as Receipt);
 
-    const rows = Object.entries(response).flatMap(([date, items], index) =>
-      Object.entries(items).map(([itemName, price], itemIndex) => ({
-        itemName,
-        date,
-        price,
-      }))
-    );
-
-    for (const row of rows) {
-      await addItem(userId, row.itemName, new Date().toISOString(), row.price);
-    }
-
-    deletePhoto(photoName);
     setIsLoading(false);
   };
 
@@ -74,11 +83,7 @@ const PhotoHandlingWrapper = () => {
         Swap input
       </button>
       <div className="flex flex-col items-center m-5">
-        {!cameraOn ? (
           <PhotoUpload setPhotoName={setPhotoName} setPhoto={setPhoto} />
-        ) : (
-          <CameraComponent setPhotoName={setPhotoName} setPhoto={setPhoto} />
-        )}
         {photo && <img src={photo as string} />}
       </div>
       <button
