@@ -2,22 +2,20 @@ import React from "react";
 
 interface PhotoUploadProps {
   setPhotoName: React.Dispatch<React.SetStateAction<string>>;
-  setPhoto: React.Dispatch<
-    React.SetStateAction<string | ArrayBuffer | null | ImageData | undefined>
-  >;
+  setPhoto: (imageBufferBase64: string) => void
 }
 
 const PhotoUpload: React.FC<PhotoUploadProps> = (props: PhotoUploadProps) => {
   const { setPhotoName, setPhoto } = props;
 
   const handlePhotoChange = async (
-    event: React.ChangeEvent<HTMLInputElement>
+      event: React.ChangeEvent<HTMLInputElement>
   ) => {
     const file = event.target.files?.[0];
     if (file) {
       const reader = new FileReader();
-      reader.onloadend = async () => {
-        const result = reader.result;
+      reader.onloadend = () => {
+        const result = reader.result as string; // Ensuring result is treated as a string
         setPhotoName(file.name);
         setPhoto(result);
       };
@@ -29,6 +27,7 @@ const PhotoUpload: React.FC<PhotoUploadProps> = (props: PhotoUploadProps) => {
       console.error("Failed choosing photo!");
     }
   };
+
 
   return (
     <div>
