@@ -1,14 +1,12 @@
 "use client";
 
-
 import { useSession, useUser } from "@clerk/nextjs";
 import { createClient } from "@supabase/supabase-js";
 import { useEffect, useState } from "react";
 
 export default function Page() {
-  const [tasks, setTasks] = useState<any[]>([]);
+  const [items, setItems] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const [name, setName] = useState("");
   //   The `useUser()` hook will be used to ensure that Clerk has loaded data about the logged in user
   const { user } = useUser();
   // The `useSession()` hook will be used to get the Clerk session object
@@ -53,45 +51,47 @@ export default function Page() {
     async function loadItems() {
       setLoading(true);
       const { data, error } = await client.from("itemsList").select();
-      if (!error) setTasks(data);
+      if (!error) setItems(data);
+      console.log("DATA", data);
+
+      data?.forEach;
+
       setLoading(false);
     }
 
     loadItems();
   }, [user]);
 
-  async function createItem(e: React.FormEvent<HTMLFormElement>) {
-    e.preventDefault();
-    // Insert task into the "tasks" database
-    await client.from("itemsList").insert({
-      name,
-    });
-    window.location.reload();
-  }
-
   return (
-    <div>
-      <h1>Tasks</h1>
-
+    <div>      
       {loading && <p>Loading...</p>}
 
-      {!loading &&
-        tasks.length > 0 &&
-        tasks.map((task: any, i) => <p key={i}>{task.name}</p>)}
+      {!loading && items.length > 0 && (
+        <div className="overflow-x-auto">
+          <table className="min-w-full bg-white">
+            <thead className="bg-gray-800 text-white">
+              <tr>
+                <th className="w-1/4 px-4 py-2">#</th>
+                <th className="w-1/2 px-4 py-2">Item Name</th>
+                <th className="w-1/4 px-4 py-2">Date</th>
+                <th className="w-1/4 px-4 py-2">Price</th>
+              </tr>
+            </thead>
+            <tbody>
+              {items.map(({ item, date, price }, i) => (
+                <tr key={i} className="text-center border-t">
+                  <td className="px-4 py-2">{i + 1}</td>
+                  <td className="px-4 py-2">{item}</td>
+                  <td className="px-4 py-2">{date}</td>
+                  <td className="px-4 py-2">{price.toFixed(2)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
 
-      {!loading && tasks.length === 0 && <p>No tasks found</p>}
-
-      <form onSubmit={createItem}>
-        <input
-          autoFocus
-          type="text"
-          name="name"
-          placeholder="Enter new task"
-          onChange={(e) => setName(e.target.value)}
-          value={name}
-        />
-        <button type="submit">Add</button>
-      </form>
+      {!loading && items.length === 0 && <p>No tasks found</p>}
     </div>
   );
 }
