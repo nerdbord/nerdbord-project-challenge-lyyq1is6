@@ -2,10 +2,12 @@
 
 import { useSession, useUser } from "@clerk/nextjs";
 import { createClient } from "@supabase/supabase-js";
-import { useEffect, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 
 export default function Page() {
   const [items, setItems] = useState<any[]>([]);
+  const [startDate, setStartDate] = useState();
+  const [endDate, setEndDate] = useState();
   const [loading, setLoading] = useState(true);
   //   The `useUser()` hook will be used to ensure that Clerk has loaded data about the logged in user
   const { user } = useUser();
@@ -52,20 +54,61 @@ export default function Page() {
       setLoading(true);
       const { data, error } = await client.from("itemsList").select();
       if (!error) setItems(data);
-      console.log("DATA", data);
-
-      data?.forEach;
-
       setLoading(false);
     }
 
     loadItems();
-  }, [user]);
+  }, [user, startDate, endDate]);
+
+  const handleChangeStartDate = (event: any) => {
+    setStartDate(event.target.value);
+  };
+
+  const handleChangeEndDate = (event: any) => {
+    setEndDate(event.target.value);
+  };
+
+  const filterItems = () => {
+    return items.filter((item) => {
+      const itemDate = new Date(item.date);
+      const start = startDate ? new Date(startDate) : null;
+      const end = endDate ? new Date(endDate) : null;
+
+      if (start && end) {
+        return itemDate >= start && itemDate <= end;
+      } else if (start) {
+        return itemDate >= start;
+      } else if (end) {
+        return itemDate <= end;
+      } else {
+        return true; // No filter applied
+      }
+    });
+  };
+
+
 
   return (
-    <div>      
+    <div>
+      <div>
+        <a
+          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded w-min text-nowrap my-3"
+          href="/"
+        >
+          Back to receipt scanner
+        </a>
+        <div>
+          start date:
+          <input
+            type="date"
+            onChange={handleChangeStartDate}
+            value={startDate}
+          />
+          end date:
+          <input type="date" onChange={handleChangeEndDate} value={endDate} />
+        </div>
+      </div>
       {loading && <p>Loading...</p>}
-
       {!loading && items.length > 0 && (
         <div className="overflow-x-auto">
           <table className="min-w-full bg-white">
@@ -78,14 +121,16 @@ export default function Page() {
               </tr>
             </thead>
             <tbody>
-              {items.map(({ item, date, price }, i) => (
-                <tr key={i} className="text-center border-t">
-                  <td className="px-4 py-2">{i + 1}</td>
-                  <td className="px-4 py-2">{item}</td>
-                  <td className="px-4 py-2">{date}</td>
-                  <td className="px-4 py-2">{price.toFixed(2)}</td>
-                </tr>
-              ))}
+              {filterItems().map(({ item, date, price }, i) => {
+                return (
+                  <tr key={i} className="text-center border-t">
+                    <td className="px-4 py-2">{i + 1}</td>
+                    <td className="px-4 py-2">{item}</td>
+                    <td className="px-4 py-2">{date}</td>
+                    <td className="px-4 py-2">{price.toFixed(2)}</td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
         </div>
