@@ -86,7 +86,27 @@ export default function Page() {
     });
   };
 
+  function handleDownloadCsv() {
+    const csvData =
+      `index,item name,date,price\n` +
+      filterItems()
+        .map(({ item, date, price }, i) => {
+          return `${i},${item},${date},${price}`;
+        })
+        .join("\n");
 
+    const csvBlob = new Blob([csvData], { type: "text/csv" });
+    const blobUrl = URL.createObjectURL(csvBlob);
+
+    const a = document.createElement("a");
+    a.href = blobUrl;
+    a.download = "my-receipt-data.csv";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+
+    console.log(csvData);
+  }
 
   return (
     <div>
@@ -137,6 +157,13 @@ export default function Page() {
       )}
 
       {!loading && items.length === 0 && <p>No tasks found</p>}
+
+      <button
+        className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded w-min text-nowrap my-3"
+        onClick={handleDownloadCsv}
+      >
+        Download as CSV
+      </button>
     </div>
   );
 }
