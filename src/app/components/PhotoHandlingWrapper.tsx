@@ -11,6 +11,7 @@ import axios from "axios";
 import parseReceipt from "@/services/parseReceipt";
 import { addItem } from "@/services/supabaseServices";
 import { v4 as uuidv4 } from "uuid";
+import { redirect } from "next/navigation";
 import {openaiClient} from "@/lib/openai";
 import {generateObject} from "ai";
 import {z} from "zod";
@@ -72,9 +73,15 @@ const PhotoHandlingWrapper = () => {
   };
 
   return (
-    <div>
+    <div className="flex flex-col">
+      <a
+        className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded w-min text-nowrap my-3"
+        href="/tracker"
+      >
+        Go to tracker
+      </a>
       <button
-        className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+        className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded w-min text-nowrap"
         onClick={() => {
           setCameraOn((prev) => !prev);
         }}
@@ -87,11 +94,11 @@ const PhotoHandlingWrapper = () => {
         {photo && <img src={photo as string} />}
       </div>
       <button
-        className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+        className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded w-min text-nowrap"
         onClick={handleOnClick}
         disabled={isLoading}
       >
-        {isLoading ? "Loading..." : "Czekierałt!"}
+        {isLoading ? "Loading..." : "Parse receipt"}
       </button>
       {receiptData && <ExpenseTable data={receiptData} />}
     </div>
