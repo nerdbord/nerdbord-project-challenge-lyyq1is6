@@ -1,9 +1,8 @@
 "use client";
 
+
 import { useSession, useUser } from "@clerk/nextjs";
-import { auth } from "@clerk/nextjs/server";
 import { createClient } from "@supabase/supabase-js";
-import { redirect } from "next/navigation";
 import { useEffect, useState } from "react";
 
 export default function Page() {
@@ -78,7 +77,7 @@ export default function Page() {
 
       {!loading &&
         tasks.length > 0 &&
-        tasks.map((task: any) => <p>{task.name}</p>)}
+        tasks.map((task: any, i) => <p key={i}>{task.name}</p>)}
 
       {!loading && tasks.length === 0 && <p>No tasks found</p>}
 
